@@ -1,0 +1,17 @@
+{
+  "name": "manualkeydecoder",
+  "version": "0.0.1",
+  "description": "Assists in getting bitting from images of keys",
+  "main": "dist/js/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Peter Farley <far.peter1@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/jquery": "^3.3.0"
+  }
+}

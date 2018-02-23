@@ -1,0 +1,149 @@
+{
+    "dsd": [
+        {
+            "names": [
+                "Schlage"
+            ],
+            "types": [
+                "C", "CE", "E", "EF", "F", "FG", "G", "H", "J", "K", "L", "1145", "145", "SC"
+            ],
+            "incremental_depths": true,
+            "incremental_spacing": true,
+
+            "depth0": 8.51,
+            "depth_inc": 0.38,
+            "depth_count": 10,
+            "depth_start": 0,
+
+            "space0": 5.87,
+            "space_inc": 3.96,
+            "min_spaces": 5,
+            "max_spaces": 6,
+
+            "blade_length": 26.5557,
+            "blade_height": 8.51,
+
+            "order": 0
+        },
+
+        {
+            "names": [
+                "Master Lock"
+            ],
+            "types": [
+                "130K", "1B019"
+            ],
+            "incremental_depths": true,
+            "incremental_spacing": true,
+
+            "depth0": 6.858,
+            "depth_inc": 0.762,
+            "depth_count": 4,
+            "depth_start": 0,
+
+            "space0": 3.3528,
+            "space_inc": 3.048,
+            "min_spaces": 4,
+            "max_spaces": 4,
+
+            "blade_length": 17.0434,
+            "blade_height": 6.858,
+
+            "order": 0
+        },
+
+        {
+            "names": [
+                "Best", "Arrow", "Falcon"
+            ],
+            "types": [
+                "A2", "F"
+            ],
+            "incremental_depths": false,
+            "incremental_spacing": true,
+
+            "depths": [
+                { "cut": "0", "depth": 8.08 },
+                { "cut": "1", "depth": 7.75 },
+                { "cut": "2", "depth": 7.44 },
+                { "cut": "3", "depth": 7.11 },
+                { "cut": "4", "depth": 6.81 },
+                { "cut": "5", "depth": 6.48 },
+                { "cut": "6", "depth": 6.17 },
+                { "cut": "7", "depth": 5.84 },
+                { "cut": "8", "depth": 5.54 },
+                { "cut": "9", "depth": 5.21 }
+            ],
+            "depth_count": 10,
+
+            "space0": 2.24,
+            "space_inc": 3.81,
+            "min_spaces": 5,
+            "max_spaces": 6,
+
+            "blade_length": 35.814,
+            "blade_height": 8.08,
+
+            "order": 1
+        },
+
+        {
+            "names": [
+                "Best", "Arrow", "Falcon"
+            ],
+            "types": [
+                "A3", "A"
+            ],
+            "incremental_depths": true,
+            "incremental_spacing": true,
+
+            "depth0": 8.08,
+            "depth_inc": 0.46,
+            "depth_count": 6,
+            "depth_start": 0,
+
+            "space0": 2.24,
+            "space_inc": 3.81,
+            "min_spaces": 5,
+            "max_spaces": 6,
+
+            "blade_length": 35.814,
+            "blade_height": 8.08,
+
+            "order": 1
+        },
+
+        {
+            "names": [
+                "Chicago"
+            ],
+            "types": [
+                "Disc", "1454"
+            ],
+            "incremental_depths": true,
+            "incremental_spacing": true,
+
+            "depth0": 6.35,
+            "depth_inc": 0.38,
+            "depth_count": 6,
+            "depth_start": 1,
+
+            "space0": 3.53,
+            "space_inc": 2.36,
+            "min_spaces": 4,
+            "max_spaces": 6,
+
+            "blade_length": 18.1102,
+            "blade_height": 6.35,
+
+            "order": 0
+        }
+    ],
+
+    "info": {
+        "order_types": {
+            "0": "Bow to tip",
+            "1": "Tip to bow"
+        }
+    }
+}

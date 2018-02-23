@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Key Decoder Assistant</title>
+        <link href='css/main.css' rel='stylesheet' type='text/css'>
+        <script src="lib/jquery-3.3.1.min.js"></script>
+        <script src="js/index.js"></script>
+    </head>
+    <body>
+        <div class="mainContainer">
+            <div class="fileSelector">
+                <label for="key-image">Key image:</label>
+                <input type="file" name="key-image" class="keyFile"/>
+            </div>
+            <div class="keySelector">
+                <label for="key-brand">Brand:</label>
+                <select name="key-brand" class="keyBrandSelect">
+                </select>
+
+                <label for="key-type">Type:</label>
+                <select name="key-type" class="keyTypeSelect">
+                </select>
+
+                <label for="key-ncuts"># Cuts:</label>
+                <select name="key-ncuts" class="keyNCutsSelect">
+                </select>
+            </div>
+            <div class="keyDecoderControls">
+                <div class="cropControls">
+                    Left:
+                    <input type=range value="0" min="0" max="100" class="cropCtrl cropLeft"/>
+                    Top:
+                    <input type=range value="0" min="0" max="100" class="cropCtrl cropTop"/>
+                    Width:
+                    <input type=range value="0" min="0" max="100" class="cropCtrl cropWidth"/>
+                    Height:
+                    <input type=range value="0" min="0" max="100" class="cropCtrl cropHeight"/>
+                    <input type=button value="Crop" class="cropButton"/>
+                </div>
+                <div class="alignControls">
+                    Rotation:
+                    <input type=range value="0" min="-90" max="90" step=".5" class="alignCtrl alignRotate"/>
+                    HFlip:
+                    <input type=checkbox value="1" class="alignCtrl alignHFlip"/>
+                    VFlip:
+                    <input type=checkbox value="1" class="alignCtrl alignVFlip"/>
+                    <br/>
+                    Bottom:
+                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignBottom"/>
+                    Top:
+                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignTop"/>
+                    Shoulder:
+                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignShoulder"/>
+                    Tip:
+                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignTip"/>
+                </div>
+                <div class="bittingControls"></div>
+            </div>
+            <div class="keyDecoder">
+                <canvas class="keyCanvas"></canvas>
+                <canvas class="controlCanvas"></canvas>
+                <canvas class="bittingCanvas"></canvas>
+            </div>
+        </div>
+    </body>
+</html>
