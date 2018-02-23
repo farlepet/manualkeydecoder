@@ -10,53 +10,63 @@
     <body>
         <div class="mainContainer">
             <div class="fileSelector">
-                <label for="key-image">Key image:</label>
+                <h3>Key image</h3>
                 <input type="file" name="key-image" class="keyFile"/>
             </div>
-            <div class="keySelector">
-                <label for="key-brand">Brand:</label>
-                <select name="key-brand" class="keyBrandSelect">
-                </select>
-
-                <label for="key-type">Type:</label>
-                <select name="key-type" class="keyTypeSelect">
-                </select>
-
-                <label for="key-ncuts"># Cuts:</label>
-                <select name="key-ncuts" class="keyNCutsSelect">
-                </select>
-            </div>
-            <div class="keyDecoderControls">
+            
+            <!--<div class="keyDecoderControls">-->
                 <div class="cropControls">
-                    Left:
-                    <input type=range value="0" min="0" max="100" class="cropCtrl cropLeft"/>
-                    Top:
-                    <input type=range value="0" min="0" max="100" class="cropCtrl cropTop"/>
-                    Width:
-                    <input type=range value="0" min="0" max="100" class="cropCtrl cropWidth"/>
-                    Height:
-                    <input type=range value="0" min="0" max="100" class="cropCtrl cropHeight"/>
+                    <h3>Crop</h3>
+                    <label for="crop-left">Left:</label>
+                    <input type=range name="crop-left" value="0" min="0" max="100" class="cropCtrl cropLeft"/>
+                    <label for="crop-top">Top:</label>
+                    <input type=range name="crop-top" value="0" min="0" max="100" class="cropCtrl cropTop"/>
+                    <label for="crop-width">Width:</label>
+                    <input type=range name="crop-width" value="0" min="0" max="100" class="cropCtrl cropWidth"/>
+                    <label for="crop-height">Height:</label>
+                    <input type=range name="crop-height" value="0" min="0" max="100" class="cropCtrl cropHeight"/>
+                    
                     <input type=button value="Crop" class="cropButton"/>
                 </div>
                 <div class="alignControls">
-                    Rotation:
-                    <input type=range value="0" min="-90" max="90" step=".5" class="alignCtrl alignRotate"/>
-                    HFlip:
-                    <input type=checkbox value="1" class="alignCtrl alignHFlip"/>
-                    VFlip:
-                    <input type=checkbox value="1" class="alignCtrl alignVFlip"/>
-                    <br/>
-                    Bottom:
-                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignBottom"/>
-                    Top:
-                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignTop"/>
-                    Shoulder:
-                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignShoulder"/>
-                    Tip:
-                    <input type=range value="0" min="0" max="100" step=".5" class="alignCtrl alignTip"/>
+                    <h3>Alignment</h3>
+                    <label for="align-rotation">Rotation:</label>
+                    <input type=range name="align-rotation" value="0" min="-90" max="90" step=".5" class="alignCtrl alignRotate"/>
+                    
+                    <label for="align-hflip">HFlip</label>
+                    <input type=checkbox name="align-hflip" value="1" class="alignCtrl alignHFlip"/>
+                    <label for="align-vflip">VFlip</label>
+                    <input type=checkbox name="align-vflip" value="1" class="alignCtrl alignVFlip"/>
+                    
+                    <label for="align-bottom">Bottom</label>
+                    <input type=range name="align-bottom" value="0" min="0" max="100" step=".5" class="alignCtrl alignBottom"/>
+                    <label for="align-top">Top</label>
+                    <input type=range name="align-top" value="0" min="0" max="100" step=".5" class="alignCtrl alignTop"/>
+                    <label for="align-shoulder">Shoulder</label>
+                    <input type=range name="align-shoulder" value="0" min="0" max="100" step=".5" class="alignCtrl alignShoulder"/>
+                    <label for="align-tip">Tip</label>
+                    <input type=range name="align-tip" value="0" min="0" max="100" step=".5" class="alignCtrl alignTip"/>
                 </div>
-                <div class="bittingControls"></div>
-            </div>
+                <div class="keySelector">
+                    <h3>Select key type</h3>
+                    <label for="key-brand">Brand:</label>
+                    <select name="key-brand" class="keyBrandSelect">
+                    </select>
+    
+                    <label for="key-type">Type:</label>
+                    <select name="key-type" class="keyTypeSelect">
+                    </select>
+    
+                    <label for="key-ncuts"># Cuts:</label>
+                    <select name="key-ncuts" class="keyNCutsSelect">
+                    </select>
+                </div>
+                <div class="bittingContainer">
+                    <h3>Bitting:</h3>
+                    <div class="bittingControls"></div>
+                </div>
+            <!--</div>-->
+            <br/>
             <div class="keyDecoder">
                 <canvas class="keyCanvas"></canvas>
                 <canvas class="controlCanvas"></canvas>
