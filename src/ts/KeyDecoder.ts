@@ -88,6 +88,12 @@ class KeyDecoder {
         this.keyBrandSelect.on("change", () => { this.onKeyBrandChange(); });
         this.keyTypeSelect.on("change",  () => { this.onKeyTypeChange(); });
         this.keyNCutsSelect.on("change", () => { this.onNCutsChange(); });
+
+        $(".keyDecoderControls").masonry({
+            //itemSelector: "div:not(.keyDecoder)"
+            //percentPosition: true,
+            containerStyle: {},
+        });
     }
 
     private resizeCanvas() {
@@ -109,6 +115,8 @@ class KeyDecoder {
                     this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
                     this.keyContext.drawImage(this.image, 0, 0, this.keyCanvas.width, this.keyCanvas.height);
                 }
+
+                $(".keyDecoderControls").masonry();
             }
 
             this.image.src = this.imageURL;

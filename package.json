@@ -12,6 +12,7 @@
   "author": "Peter Farley <far.peter1@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@types/jquery": "^3.3.0"
+    "@types/jquery": "^3.3.0",
+    "@types/masonry-layout": "^4.2.0"
   }
 }

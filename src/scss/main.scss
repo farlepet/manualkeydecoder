@@ -1,54 +1,57 @@
 .mainContainer {
-    position: absolute;
+    //position: absolute;
 
     width:  100%;
     height: 100%;
 
     //display: inline-block;
 
-    .fileSelector, .keySelector, .cropControls, .alignControls, .bittingContainer {
-        outline-width: 1px;
-        //outline-style: groove;
-        outline-style: solid;
-        outline-color: black;
+    .keyDecoderControls {
 
-        padding: 2mm;
-        margin:  1mm;
-        padding-top: 0;
+        min-height: 50px;
+        overflow: hidden;
 
-        //display: inline-block;
+        .fileSelector, .keySelector, .cropControls, .alignControls, .bittingContainer {
+            outline-width: 1px;
+            //outline-style: groove;
+            outline-style: solid;
+            outline-color: black;
 
-        //width: 30%;
+            padding: 2mm;
+            padding-top: 0;
+            margin:  1mm;
+            margin-right: 0;
 
-        float: left;
+            
 
-        label {
-            white-space: pre;
-            text-align: left;
-        }::before {
-            content: "\A";
+            label {
+                white-space: pre;
+                text-align: left;
+            }::before {
+                content: "\A";
+            }
+
+            :not(label) {
+                text-align: right;
+            }
+
+            h3 {
+                margin:  0;
+                padding: 0;
+            }
+
+            //break-inside: avoid;
         }
-
-        :not(label) {
-            text-align: right;
-        }
-
-        h3 {
-            margin:  0;
-            padding: 0;
-        }
-
-        //break-inside: avoid;
     }
 
     .keyDecoder {
-        position: relative;
+        //position: relative;
 
         width:  100%;
         height: 50%;
 
-        clear: left;
-        float: left;
+        //clear: left;
+        //float: left;
 
         canvas {
             position: absolute;
@@ -70,12 +73,12 @@
 
 @media (min-width: 800px) and (max-width: 1499px) {
     .fileSelector, .keySelector, .cropControls, .alignControls, .bittingContainer {
-        width: 30%;
+        width: 31%;
     }
 }
 
 @media (max-width: 799px) {
     .fileSelector, .keySelector, .cropControls, .alignControls, .bittingContainer {
-        width: 95%;
+        width: 99%;
     }
 }

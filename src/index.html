@@ -5,16 +5,17 @@
         <title>Key Decoder Assistant</title>
         <link href='css/main.css' rel='stylesheet' type='text/css'>
         <script src="lib/jquery-3.3.1.min.js"></script>
+        <script src="lib/masonry.pkgd.min.js"></script>
         <script src="js/index.js"></script>
     </head>
     <body>
         <div class="mainContainer">
-            <div class="fileSelector">
-                <h3>Key image</h3>
-                <input type="file" name="key-image" class="keyFile"/>
-            </div>
+            <div class="keyDecoderControls">
+                <div class="fileSelector">
+                    <h3>Key image</h3>
+                    <input type="file" name="key-image" class="keyFile"/>
+                </div>
             
-            <!--<div class="keyDecoderControls">-->
                 <div class="cropControls">
                     <h3>Crop</h3>
                     <label for="crop-left">Left:</label>
@@ -65,12 +66,13 @@
                     <h3>Bitting:</h3>
                     <div class="bittingControls"></div>
                 </div>
-            <!--</div>-->
-            <div class="keyDecoder">
-                <canvas class="keyCanvas"></canvas>
-                <canvas class="controlCanvas"></canvas>
-                <canvas class="bittingCanvas"></canvas>
+                <div class="keyDecoder">
+                    <canvas class="keyCanvas"></canvas>
+                    <canvas class="controlCanvas"></canvas>
+                    <canvas class="bittingCanvas"></canvas>
+                </div>
             </div>
+            
         </div>
     </body>
 </html>
