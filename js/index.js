@@ -241,6 +241,11 @@ var KeyDecoder = /** @class */ (function () {
         this.keyBrandSelect.on("change", function () { _this.onKeyBrandChange(); });
         this.keyTypeSelect.on("change", function () { _this.onKeyTypeChange(); });
         this.keyNCutsSelect.on("change", function () { _this.onNCutsChange(); });
+        $(".keyDecoderControls").masonry({
+            //itemSelector: "div:not(.keyDecoder)"
+            //percentPosition: true,
+            containerStyle: {},
+        });
     };
     KeyDecoder.prototype.resizeCanvas = function () {
         var rect = this.keyCanvas.getBoundingClientRect();
@@ -259,6 +264,7 @@ var KeyDecoder = /** @class */ (function () {
                     _this.keyContext.clearRect(0, 0, _this.keyCanvas.width, _this.keyCanvas.height);
                     _this.keyContext.drawImage(_this.image, 0, 0, _this.keyCanvas.width, _this.keyCanvas.height);
                 }
+                $(".keyDecoderControls").masonry();
             };
             _this.image.src = _this.imageURL;
         };

@@ -1,31 +1,38 @@
+/*html {
+    min-height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+}*/
 .mainContainer {
-  position: absolute;
   width: 100%;
   height: 100%; }
-  .mainContainer .fileSelector, .mainContainer .keySelector, .mainContainer .cropControls, .mainContainer .alignControls, .mainContainer .bittingContainer {
-    outline-width: 1px;
-    outline-style: solid;
-    outline-color: black;
-    padding: 2mm;
-    margin: 1mm;
-    padding-top: 0;
-    float: left; }
-    .mainContainer .fileSelector label, .mainContainer .keySelector label, .mainContainer .cropControls label, .mainContainer .alignControls label, .mainContainer .bittingContainer label {
-      white-space: pre;
-      text-align: left; }
-    .mainContainer .fileSelector ::before, .mainContainer .keySelector ::before, .mainContainer .cropControls ::before, .mainContainer .alignControls ::before, .mainContainer .bittingContainer ::before {
-      content: "\A"; }
-    .mainContainer .fileSelector :not(label), .mainContainer .keySelector :not(label), .mainContainer .cropControls :not(label), .mainContainer .alignControls :not(label), .mainContainer .bittingContainer :not(label) {
-      text-align: right; }
-    .mainContainer .fileSelector h3, .mainContainer .keySelector h3, .mainContainer .cropControls h3, .mainContainer .alignControls h3, .mainContainer .bittingContainer h3 {
-      margin: 0;
-      padding: 0; }
+  .mainContainer .keyDecoderControls {
+    min-height: 50px;
+    overflow: hidden; }
+    .mainContainer .keyDecoderControls .fileSelector, .mainContainer .keyDecoderControls .keySelector, .mainContainer .keyDecoderControls .cropControls, .mainContainer .keyDecoderControls .alignControls, .mainContainer .keyDecoderControls .bittingContainer {
+      outline-width: 1px;
+      outline-style: solid;
+      outline-color: black;
+      padding: 2mm;
+      padding-top: 0;
+      margin: 1mm;
+      margin-right: 0; }
+      .mainContainer .keyDecoderControls .fileSelector label, .mainContainer .keyDecoderControls .keySelector label, .mainContainer .keyDecoderControls .cropControls label, .mainContainer .keyDecoderControls .alignControls label, .mainContainer .keyDecoderControls .bittingContainer label {
+        white-space: pre;
+        text-align: left; }
+      .mainContainer .keyDecoderControls .fileSelector ::before, .mainContainer .keyDecoderControls .keySelector ::before, .mainContainer .keyDecoderControls .cropControls ::before, .mainContainer .keyDecoderControls .alignControls ::before, .mainContainer .keyDecoderControls .bittingContainer ::before {
+        content: "\A"; }
+      .mainContainer .keyDecoderControls .fileSelector :not(label), .mainContainer .keyDecoderControls .keySelector :not(label), .mainContainer .keyDecoderControls .cropControls :not(label), .mainContainer .keyDecoderControls .alignControls :not(label), .mainContainer .keyDecoderControls .bittingContainer :not(label) {
+        text-align: right; }
+      .mainContainer .keyDecoderControls .fileSelector h3, .mainContainer .keyDecoderControls .keySelector h3, .mainContainer .keyDecoderControls .cropControls h3, .mainContainer .keyDecoderControls .alignControls h3, .mainContainer .keyDecoderControls .bittingContainer h3 {
+        margin: 0;
+        padding: 0; }
   .mainContainer .keyDecoder {
-    position: relative;
     width: 100%;
-    height: 50%;
-    clear: left;
-    float: left; }
+    height: 50%; }
     .mainContainer .keyDecoder canvas {
       position: absolute;
       top: 0;
@@ -39,8 +46,8 @@
 
 @media (min-width: 800px) and (max-width: 1499px) {
   .fileSelector, .keySelector, .cropControls, .alignControls, .bittingContainer {
-    width: 30%; } }
+    width: 31%; } }
 
 @media (max-width: 799px) {
   .fileSelector, .keySelector, .cropControls, .alignControls, .bittingContainer {
-    width: 95%; } }
+    width: 99%; } }
