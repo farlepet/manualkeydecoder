@@ -35,6 +35,8 @@ class KeyDecoder {
     private firstCut:    number = 0;
     private cutOrder:    number = 0;
 
+    private bittingColor: string = "Yellow";
+
     public constructor() {
         this.dsd = new DSDDatabase();
 
@@ -314,15 +316,25 @@ class KeyDecoder {
             let firstX;
             let bottomY = +bottom / 100 * this.ctrlCanvas.height;
 
+            let x = 0, y = 0;
+
+            let placeBit = (x: number, y: number) => {
+                if(this.bittingContext !== null) {
+                    canvas.drawLine(this.bittingContext, x - 8, y - 16, x,     y, this.bittingColor);
+                    canvas.drawLine(this.bittingContext, x + 8, y - 16, x,     y, this.bittingColor);
+                    canvas.drawLine(this.bittingContext, x - 8, y,      x + 8, y, this.bittingColor);
+                }
+            }
+            
             switch(this.cutOrder) {
                 // TODO: Support tip-relative
                 case 0:
                     firstX  = this.firstCut * this.hPixPermm + (+shoulder / 100 * this.ctrlCanvas.width);
 
                     for(let i = 0; i < depths.length; i++) {
-                        let x = firstX + this.cutSpacing * this.hPixPermm * i;
-                        let y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
-                        canvas.drawLine(this.bittingContext, x - 8, y, x + 8, y, "yellow");
+                        x = firstX + this.cutSpacing * this.hPixPermm * i;
+                        y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
+                        placeBit(x, y);
                     }
                     break;
                 
@@ -330,9 +342,9 @@ class KeyDecoder {
                     firstX  = (+tip / 100 * this.ctrlCanvas.width) - this.firstCut * this.hPixPermm;
 
                     for(let i = depths.length - 1; i >= 0; i--) {
-                        let x = firstX - this.cutSpacing * this.hPixPermm * i;
-                        let y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
-                        canvas.drawLine(this.bittingContext, x - 8, y, x + 8, y, "yellow");
+                        x = firstX - this.cutSpacing * this.hPixPermm * i;
+                        y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
+                        placeBit(x, y);
                     }
                     break;
             }

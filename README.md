@@ -26,5 +26,11 @@ Build and run
 Build requirements:
  * `sassc`
  * `make`
+ * `tsc`: Typescript
+
+Building:
+ 1. Run `tsc` to build typescript
+ 2. Run `make scss-compile` to build stylesheets
+ 3. Run `make copy-web` to copy static content
 
 To run, just point a web browser to `./dist/index.html`
