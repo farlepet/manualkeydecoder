@@ -57,7 +57,7 @@
                 "Best", "Arrow", "Falcon"
             ],
             "types": [
-                "A2", "F"
+                "A2", "F", "D"
             ],
             "incremental_depths": false,
             "incremental_spacing": true,

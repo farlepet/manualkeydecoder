@@ -202,6 +202,7 @@ var KeyDecoder = /** @class */ (function () {
         this.cutSpacing = 0;
         this.firstCut = 0;
         this.cutOrder = 0;
+        this.bittingColor = "Yellow";
         this.dsd = new DSDDatabase();
         this.keyFile = $(".keyFile");
         this.keyCanvas = $(".keyCanvas")[0];
@@ -397,6 +398,7 @@ var KeyDecoder = /** @class */ (function () {
         }
     };
     KeyDecoder.prototype.drawBittingApproximation = function (depths) {
+        var _this = this;
         var bottom = this.alignControls.bottom.val();
         var top = this.alignControls.top.val();
         var shoulder = this.alignControls.shoulder.val();
@@ -405,22 +407,30 @@ var KeyDecoder = /** @class */ (function () {
             this.bittingContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
             var firstX = void 0;
             var bottomY = +bottom / 100 * this.ctrlCanvas.height;
+            var x = 0, y = 0;
+            var placeBit = function (x, y) {
+                if (_this.bittingContext !== null) {
+                    canvas.drawLine(_this.bittingContext, x - 8, y - 16, x, y, _this.bittingColor);
+                    canvas.drawLine(_this.bittingContext, x + 8, y - 16, x, y, _this.bittingColor);
+                    canvas.drawLine(_this.bittingContext, x - 8, y, x + 8, y, _this.bittingColor);
+                }
+            };
             switch (this.cutOrder) {
                 // TODO: Support tip-relative
                 case 0:
                     firstX = this.firstCut * this.hPixPermm + (+shoulder / 100 * this.ctrlCanvas.width);
                     for (var i = 0; i < depths.length; i++) {
-                        var x = firstX + this.cutSpacing * this.hPixPermm * i;
-                        var y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
-                        canvas.drawLine(this.bittingContext, x - 8, y, x + 8, y, "yellow");
+                        x = firstX + this.cutSpacing * this.hPixPermm * i;
+                        y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
+                        placeBit(x, y);
                     }
                     break;
                 case 1:
                     firstX = (+tip / 100 * this.ctrlCanvas.width) - this.firstCut * this.hPixPermm;
                     for (var i = depths.length - 1; i >= 0; i--) {
-                        var x = firstX - this.cutSpacing * this.hPixPermm * i;
-                        var y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
-                        canvas.drawLine(this.bittingContext, x - 8, y, x + 8, y, "yellow");
+                        x = firstX - this.cutSpacing * this.hPixPermm * i;
+                        y = bottomY - this.keyDepths[depths[i]].depth * this.vPixPermm;
+                        placeBit(x, y);
                     }
                     break;
             }
