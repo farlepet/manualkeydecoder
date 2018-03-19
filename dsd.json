@@ -79,7 +79,7 @@
             "space0": 2.24,
             "space_inc": 3.81,
             "min_spaces": 5,
-            "max_spaces": 6,
+            "max_spaces": 7,
 
             "blade_length": 35.814,
             "blade_height": 8.08,
@@ -105,7 +105,7 @@
             "space0": 2.24,
             "space_inc": 3.81,
             "min_spaces": 5,
-            "max_spaces": 6,
+            "max_spaces": 7,
 
             "blade_length": 35.814,
             "blade_height": 8.08,
