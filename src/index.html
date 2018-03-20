@@ -33,6 +33,11 @@
                     <h3>Alignment</h3>
                     <label for="align-rotation">Rotation:</label>
                     <input type=range name="align-rotation" value="0" min="-90" max="90" step=".5" class="alignCtrl alignRotate"/>
+
+                    <label for="align-rotation-x">Keystone N:</label>
+                    <input type=range name="align-rotation-x" value="100" min="1" max="2048" step="1" class="alignCtrl alignKeystoneSlices"/>
+                    <label for="align-rotation-y">Keystone R:</label>
+                    <input type=range name="align-rotation-y" value="1.0" min="0.25" max="2.0" step=".025" class="alignCtrl alignKeystoneRatio"/>
                     
                     <label for="align-hflip">HFlip</label>
                     <input type=checkbox name="align-hflip" value="1" class="alignCtrl alignHFlip"/>

@@ -52,10 +52,12 @@ class KeyDecoder {
         this.cropControls.width  = $(".cropWidth");
         this.cropControls.height = $(".cropHeight");
 
-        this.alignControls        = <AlignControls>new Object();
-        this.alignControls.rotate = $(".alignRotate");
-        this.alignControls.hFlip  = $(".alignHFlip");
-        this.alignControls.vFlip  = $(".alignVFlip");
+        this.alignControls                = <AlignControls>new Object();
+        this.alignControls.rotate         = $(".alignRotate");
+        this.alignControls.keystoneRatio  = $(".alignKeystoneRatio");
+        this.alignControls.keystoneSlices = $(".alignKeystoneSlices");
+        this.alignControls.hFlip          = $(".alignHFlip");
+        this.alignControls.vFlip          = $(".alignVFlip");
 
         this.alignControls.bottom   = $(".alignBottom");
         this.alignControls.top      = $(".alignTop");
@@ -231,7 +233,9 @@ class KeyDecoder {
      **************/
 
     private drawAlign() {
-        let rot            = this.alignControls.rotate.val();
+        let rotZ           = this.alignControls.rotate.val();
+        let keyS           = this.alignControls.keystoneSlices.val();
+        let keyR           = this.alignControls.keystoneRatio.val();
         let hFlip: boolean = this.alignControls.hFlip.prop("checked");
         let vFlip: boolean = this.alignControls.vFlip.prop("checked");
 
@@ -240,13 +244,24 @@ class KeyDecoder {
         let shoulder       = this.alignControls.shoulder.val();
         let tip            = this.alignControls.tip.val();
 
-        if(rot !== undefined && this.keyContext !== null) {
+        let x, y, w, h;
+        x = this.cropControls.left.val();
+        y = this.cropControls.top.val();
+        w = this.cropControls.width.val();
+        h = this.cropControls.height.val();
+
+        if(rotZ !== undefined && keyS !== undefined && keyR !== undefined && x !== undefined && y !== undefined && w !== undefined && h !== undefined && this.keyContext !== null) {
             this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
             this.keyContext.translate(this.keyCanvas.width / 2, this.keyCanvas.height / 2);
             this.keyContext.scale(hFlip ? -1 : 1, vFlip ? -1 : 1);
-            this.keyContext.rotate(+rot * Math.PI/180.0);
+            this.keyContext.rotate(+rotZ * Math.PI/180.0);
             this.keyContext.translate(-this.keyCanvas.width / 2, -this.keyCanvas.height / 2);
-            this.doCrop();
+            //this.doCrop();
+            this.cropKeyWithKeystone(
+                +x/100 * this.image.width, +y/100 * this.image.height,
+                +w/100 * this.image.width, +h/100 * this.image.height,
+                +keyS, +keyR
+            );
             this.keyContext.setTransform(1, 0, 0, 1, 0, 0);
         }
 
@@ -284,9 +299,6 @@ class KeyDecoder {
     }
 
     private onAlignChange() {
-        let rot            = this.alignControls.rotate.val();
-        let hFlip: boolean = this.alignControls.hFlip.prop("checked");
-        let vFlip: boolean = this.alignControls.vFlip.prop("checked");
 
         let bottom         = this.alignControls.bottom.val();
         let top            = this.alignControls.top.val();
@@ -414,10 +426,59 @@ class KeyDecoder {
      * @param h Height
      */
     private cropKey(x: number, y: number, w: number, h: number) {
-        if(this.image.src.length > 0) {
+        /*if(this.image.src.length > 0) {
             if(this.keyContext !== null) {
                 this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
                 this.keyContext.drawImage(this.image, x, y, w, h, 0, 0, this.keyCanvas.width, this.keyCanvas.height);
+            }
+        }*/
+        this.cropKeyWithKeystone(x, y, w, h, 1, 1);
+    }
+
+    private cropKeyWithKeystone(x: number, y: number, w: number, h: number, nSlices: number, s: number) {
+        if(this.image.src.length > 0) {
+            if(this.keyContext !== null) {
+                let sliceWidth = w / nSlices;
+                let dSliceWidth = this.keyCanvas.width / nSlices;
+
+                let dsh = this.keyCanvas.height;
+                let ddh = ((dsh * s) - dsh) / nSlices;
+                
+                this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
+
+                for(let i = 0; i < nSlices; i++) {
+                    this.keyContext.drawImage(this.image,
+                        x + sliceWidth * i, y,
+                        sliceWidth, h, //this.image.height,
+                        dSliceWidth * i, (this.keyCanvas.height - dsh)/2,
+                        dSliceWidth, dsh);
+                    
+                    dsh += ddh;
+                }
+                
+                
+                
+                /*let ih          = this.image.height;
+                let iw          = this.image.width;
+                let slices      = Math.abs(pw);
+                let sliceWidth  = iw / slices;
+                let polarity    = (pw > 0) ? 1 : -1;
+                let widthScale  = slices / iw;
+                let heightScale = (1 - s) / slices;
+
+                this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
+                
+                for(let i = 0; i < slices; i++) {
+                    let sx = sliceWidth * i;
+                    
+                    let dx      = x + (sliceWidth * i * widthScale * polarity);
+                    let dy      = y + ((h * heightScale * i) / 2);
+                    let dWidth  = sliceWidth * widthScale;
+                    let dHeight = h * (1 - (heightScale * i));
+
+                    //this.keyContext.drawImage(this.image, x, y, w, h, 0, 0, this.keyCanvas.width, this.keyCanvas.height);
+                    this.keyContext.drawImage(this.image, sx, 0, sliceWidth, ih, dx, dy, dWidth, dHeight); //this.keyCanvas.width, this.keyCanvas.height);
+                }*/
             }
         }
     }
@@ -445,9 +506,11 @@ interface CropControls {
 }
 
 interface AlignControls {
-    rotate: JQuery;
-    hFlip:  JQuery;
-    vFlip:  JQuery;
+    rotate:         JQuery;
+    keystoneSlices: JQuery;
+    keystoneRatio:  JQuery;
+    hFlip:          JQuery;
+    vFlip:          JQuery;
 
     bottom:   JQuery;
     top:      JQuery;
