@@ -37,6 +37,9 @@ class KeyDecoder {
 
     private bittingColor: string = "Yellow";
 
+    /**
+     * Constructor, grabs elements from the DOM
+     */
     public constructor() {
         this.dsd = new DSDDatabase();
 
@@ -73,6 +76,10 @@ class KeyDecoder {
         this.keyDepths = null;
     }
 
+    /**
+     * Reads the keys from the database, creates canvas contexts, and attaches
+     * event callbacks.
+     */
     public init() {
         this.dsd.readDatabase("dsd.json", () => this.onDSDUpdate());
 
@@ -100,12 +107,19 @@ class KeyDecoder {
         });
     }
 
+    /**
+     * Resizes canvas to size of the element, to prevent distortion
+     */
     private resizeCanvas() {
         let rect = this.keyCanvas.getBoundingClientRect();
         this.keyCanvas.height = this.ctrlCanvas.height = this.bittingCanvas.height = rect.height;
         this.keyCanvas.width  = this.ctrlCanvas.width  = this.bittingCanvas.width  = rect.width;
     }
 
+    /**
+     * Called when a new image is chosen. Draws the image on the canvas in order
+     * to be cropped.
+     */
     private onKeyFileChange() {
         console.info(this.keyFile.prop("files")[0]);
 
@@ -129,6 +143,10 @@ class KeyDecoder {
         fr.readAsDataURL(this.keyFile.prop("files")[0]);
     }
 
+    /**
+     * Called when the DSD database is updated. Clears the selection boxes, and
+     * populates the brands.
+     */
     private onDSDUpdate() {
         this.keyBrandSelect.empty();
         this.keyTypeSelect.empty();
@@ -145,6 +163,9 @@ class KeyDecoder {
         this.onKeyBrandChange();
     }
 
+    /**
+     * Called when a key brand is selected. Updates the list of keys types.
+     */
     private onKeyBrandChange() {
         this.keyTypeSelect.empty();
 
@@ -164,6 +185,9 @@ class KeyDecoder {
         }
     }
 
+    /**
+     * Called when a key type is selected. Updates list of possible number of cuts.
+     */
     private onKeyTypeChange() {
         let type = this.keyTypeSelect.val();
 
@@ -189,6 +213,10 @@ class KeyDecoder {
         }
     }
 
+    /**
+     * Called when the number of cuts is selected. Updates the number of select
+     * boxes for choosing bitting codes.
+     */
     private onNCutsChange() {
         let nCuts = this.keyNCutsSelect.val();
         this.bittingControlsDiv.empty();
@@ -210,6 +238,10 @@ class KeyDecoder {
         }
     }
 
+    /**
+     * Called when a bitting is selected for one of the cuts. Redraws bitting
+     * lines on the bitting canvas.
+     */
     private onBittingChange() {
         let nCuts = this.keyNCutsSelect.val();
         if(nCuts !== undefined) {
@@ -232,6 +264,10 @@ class KeyDecoder {
      * Align Mode * 
      **************/
 
+    /**
+     * Redraws image with crop, rotation, flipping, and keystone, then draws
+     * alignment lines.
+     */
     private drawAlign() {
         let rotZ           = this.alignControls.rotate.val();
         let keyS           = this.alignControls.keystoneSlices.val();
@@ -298,6 +334,10 @@ class KeyDecoder {
         }
     }
 
+    /**
+     * Called when alignment controls are changed. Calls drawAlign(), and sets
+     * the horizontal and vertical resolution in terms of pixels per mm.
+     */
     private onAlignChange() {
 
         let bottom         = this.alignControls.bottom.val();
@@ -316,6 +356,11 @@ class KeyDecoder {
         }
     }
 
+    /**
+     * Draws the bitting approximation on top of the key for visual inspection.
+     * 
+     * @param depths List of cut depths to display
+     */
     private drawBittingApproximation(depths: number[]) {
         let bottom         = this.alignControls.bottom.val();
         let top            = this.alignControls.top.val();
@@ -367,6 +412,9 @@ class KeyDecoder {
      * Crop Mode *
      *************/
 
+    /**
+     * Displays crop lines.
+     */
     private onCropChange() {
         let x, y, w, h;
         x = this.cropControls.left.val();
@@ -395,6 +443,9 @@ class KeyDecoder {
         }
     }
 
+    /**
+     * Crops image.
+     */
     private doCrop() {
         let x, y, w, h;
         x = this.cropControls.left.val();
@@ -435,6 +486,16 @@ class KeyDecoder {
         this.cropKeyWithKeystone(x, y, w, h, 1, 1);
     }
 
+    /**
+     * Crops the image of the key, and keystone correct
+     * 
+     * @param x X position
+     * @param y Y position
+     * @param w Width
+     * @param h Height
+     * @param nSlices Number of slices used to perform keystone correction
+     * @param s Keystone scale (1 = no keystone, <1 = right end is smaller, >1 = right end is larger)
+     */
     private cropKeyWithKeystone(x: number, y: number, w: number, h: number, nSlices: number, s: number) {
         if(this.image.src.length > 0) {
             if(this.keyContext !== null) {
@@ -455,34 +516,18 @@ class KeyDecoder {
                     
                     dsh += ddh;
                 }
-                
-                
-                
-                /*let ih          = this.image.height;
-                let iw          = this.image.width;
-                let slices      = Math.abs(pw);
-                let sliceWidth  = iw / slices;
-                let polarity    = (pw > 0) ? 1 : -1;
-                let widthScale  = slices / iw;
-                let heightScale = (1 - s) / slices;
-
-                this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
-                
-                for(let i = 0; i < slices; i++) {
-                    let sx = sliceWidth * i;
-                    
-                    let dx      = x + (sliceWidth * i * widthScale * polarity);
-                    let dy      = y + ((h * heightScale * i) / 2);
-                    let dWidth  = sliceWidth * widthScale;
-                    let dHeight = h * (1 - (heightScale * i));
-
-                    //this.keyContext.drawImage(this.image, x, y, w, h, 0, 0, this.keyCanvas.width, this.keyCanvas.height);
-                    this.keyContext.drawImage(this.image, sx, 0, sliceWidth, ih, dx, dy, dWidth, dHeight); //this.keyCanvas.width, this.keyCanvas.height);
-                }*/
             }
         }
     }
 
+    /**
+     * Displays crop box over image.
+     * 
+     * @param x Left of crop box
+     * @param y Top of crop box
+     * @param w Width of crop box
+     * @param h Height of crop box
+     */
     private updateCropBox(x: number, y: number, w: number, h: number) {
         if(this.ctrlContext !== null) {
             this.ctrlContext.clearRect(0, 0, this.ctrlCanvas.width, this.ctrlCanvas.height);
