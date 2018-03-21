@@ -210,6 +210,18 @@ class KeyDecoder {
             });
 
             this.onNCutsChange();
+
+            let bottom         = this.alignControls.bottom.val();
+            let top            = this.alignControls.top.val();
+            let shoulder       = this.alignControls.shoulder.val();
+            let tip            = this.alignControls.tip.val();
+            if(bottom !== undefined && top !== undefined) {
+                this.vPixPermm = (((+bottom - +top) / 100) * this.ctrlCanvas.height) / this.bladeHeight;
+            }
+    
+            if(shoulder !== undefined && tip !== undefined) {
+                this.hPixPermm = (((+tip - +shoulder) / 100) * this.ctrlCanvas.width) / this.bladeLength;         
+            }
         }
     }
 
