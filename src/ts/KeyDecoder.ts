@@ -2,40 +2,75 @@
 /// <reference path="./CanvasFunctions.ts"/>
 
 class KeyDecoder {
-
+    /** Depth and Space Data database */
     private dsd: DSDDatabase;
 
+    /** Key image file select */
     private keyFile:        JQuery;
+    /** Canvas for displaying image of key */
     private keyCanvas:      HTMLCanvasElement;
+    /** Context of canvas for displaying image of key */
     private keyContext:     CanvasRenderingContext2D | null = null;
+    /** Canvas for displaying crop and alignment information */
     private ctrlCanvas:     HTMLCanvasElement;
+    /** Contect of canvas for displaying crop and alignment information */
     private ctrlContext:    CanvasRenderingContext2D | null = null;
+    /** Canvas for displaying approximated bitting */
     private bittingCanvas:  HTMLCanvasElement;
+    /** Context of canvas for displaying approximated bitting */
     private bittingContext: CanvasRenderingContext2D | null = null;
+    /** Base64-encoded URL of key image */
     private imageURL:       string = "";
+    /** Image element used to draw image to canvas */
     private image:          HTMLImageElement;
 
+    /** Select element used to select key brand */
     private keyBrandSelect: JQuery;
+    /** Select element used to select key type/model */
     private keyTypeSelect:  JQuery;
+    /** Select element used to select number of key cuts */
     private keyNCutsSelect: JQuery;
 
+    /** Div containing all image and key bitting controls */
     private bittingControlsDiv: JQuery;
 
+    /** Image crop controls */
     private cropControls:  CropControls;
+    /** Key alignment controls */
     private alignControls: AlignControls;
 
+    /** Current mode/step */
     private mode: DecoderMode = DecoderMode.NONE;
 
+    /** List of standard depths for key */
     private keyDepths: DSDJsonEntryDepth[] | null;
+    /** Length of blade, in mm */
     private bladeLength: number = -1;
+    /** Height of blade, in mm */
     private bladeHeight: number = -1;
+    /** Vertical pixels per mm */
     private vPixPermm:   number = 0.0;
+    /** Horizontal pixels per mm */
     private hPixPermm:   number = 0.0;
+    /** Spacing between each cut, in mm */
     private cutSpacing:  number = 0;
+    /** Location of first cut, in mm */
     private firstCut:    number = 0;
+    /** Order in which cuts are numbered (0 = bow to tip, 1 = tip to bow) */
     private cutOrder:    number = 0;
 
-    private bittingColor: string = "Yellow";
+    /** Color to use to display bitting */
+    private bittingColor:       string = "Yellow";
+    /** Color to use to display crop boundries */
+    private cropBoxColor:       string = "Red";
+    /** Color to use to display bottom alignment line */
+    private bottomAlignColor:   string = "Red";
+    /** Color to use to display top alignment line */
+    private topAlignColor:      string = "Orange";
+    /** Color to use to display shoulder alignment line */
+    private shoulderAlignColor: string = "Blue";
+    /** Color to use to display tip alignment line */
+    private tipAlignColor:      string = "Green";
 
     /**
      * Constructor, grabs elements from the DOM
@@ -319,28 +354,28 @@ class KeyDecoder {
                 canvas.drawLine(this.ctrlContext,
                     0, +bottom/100 * this.ctrlCanvas.height,
                     this.ctrlCanvas.width, +bottom/100 * this.ctrlCanvas.height,
-                    "red"
+                    this.bottomAlignColor
                 );
             }
             if(top !== undefined) {
                 canvas.drawLine(this.ctrlContext,
                     0, +top/100 * this.ctrlCanvas.height,
                     this.ctrlCanvas.width, +top/100 * this.ctrlCanvas.height,
-                    "orange"
+                    this.topAlignColor
                 );
             }
             if(shoulder !== undefined) {
                 canvas.drawLine(this.ctrlContext,
                     +shoulder/100 * this.ctrlCanvas.width, 0,
                     +shoulder/100 * this.ctrlCanvas.width, this.ctrlCanvas.height, 
-                    "blue"
+                    this.shoulderAlignColor
                 );
             }
             if(tip !== undefined) {
                 canvas.drawLine(this.ctrlContext,
                     +tip/100 * this.ctrlCanvas.width, 0,
                     +tip/100 * this.ctrlCanvas.width, this.ctrlCanvas.height, 
-                    "green"
+                    this.tipAlignColor
                 );
             }
         }
@@ -387,6 +422,12 @@ class KeyDecoder {
 
             let x = 0, y = 0;
 
+            /**
+             * Draws a key bitting approximation marker
+             * 
+             * @param x X position, in pixels
+             * @param y Y position, in pixels
+             */
             let placeBit = (x: number, y: number) => {
                 if(this.bittingContext !== null) {
                     canvas.drawLine(this.bittingContext, x - 8, y - 16, x,     y, this.bittingColor);
@@ -396,7 +437,6 @@ class KeyDecoder {
             }
             
             switch(this.cutOrder) {
-                // TODO: Support tip-relative
                 case 0:
                     firstX  = this.firstCut * this.hPixPermm + (+shoulder / 100 * this.ctrlCanvas.width);
 
@@ -489,12 +529,6 @@ class KeyDecoder {
      * @param h Height
      */
     private cropKey(x: number, y: number, w: number, h: number) {
-        /*if(this.image.src.length > 0) {
-            if(this.keyContext !== null) {
-                this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
-                this.keyContext.drawImage(this.image, x, y, w, h, 0, 0, this.keyCanvas.width, this.keyCanvas.height);
-            }
-        }*/
         this.cropKeyWithKeystone(x, y, w, h, 1, 1);
     }
 
@@ -543,34 +577,56 @@ class KeyDecoder {
     private updateCropBox(x: number, y: number, w: number, h: number) {
         if(this.ctrlContext !== null) {
             this.ctrlContext.clearRect(0, 0, this.ctrlCanvas.width, this.ctrlCanvas.height);
-            this.ctrlContext.strokeStyle = "red";
+            this.ctrlContext.strokeStyle = this.cropBoxColor;
             this.ctrlContext.strokeRect(x, y, w, h);
         }
     }
 }
 
+/**
+ * Current mode/step of decoder
+ */
 enum DecoderMode {
     NONE,
     CROP,
     ALIGN
 }
 
+/**
+ * Controls used to crop the source image
+ */
 interface CropControls {
+    /** Left side of crop boundry */
     left:   JQuery;
+    /** Top of crop boundry */
     top:    JQuery;
+    /** Width of crop boundry */
     width:  JQuery;
+    /** Height of crop boundry */
     height: JQuery;
 }
 
+/**
+ * Controls used to align key before determining bitting
+ */
 interface AlignControls {
+    /** Image rotation control */
     rotate:         JQuery;
+    /** Keystone slice count control */
     keystoneSlices: JQuery;
+    /** Keystone ratio control */
     keystoneRatio:  JQuery;
+    /** Horizontal flip toggle */
     hFlip:          JQuery;
+    /** Vertical flip toggle */
     vFlip:          JQuery;
 
+    /** Bottom of key alignment */
     bottom:   JQuery;
+    /** Top of key alignment */
     top:      JQuery;
+    /** Key shoulder alignment */
     shoulder: JQuery;
+    /** Key tip alignment */
     tip:      JQuery;
 }
