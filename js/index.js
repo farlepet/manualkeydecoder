@@ -189,20 +189,46 @@ var DSDDatabase = /** @class */ (function () {
 /// <reference path="./DSDDatabase.ts"/>
 /// <reference path="./CanvasFunctions.ts"/>
 var KeyDecoder = /** @class */ (function () {
+    /**
+     * Constructor, grabs elements from the DOM
+     */
     function KeyDecoder() {
+        /** Context of canvas for displaying image of key */
         this.keyContext = null;
+        /** Contect of canvas for displaying crop and alignment information */
         this.ctrlContext = null;
+        /** Context of canvas for displaying approximated bitting */
         this.bittingContext = null;
+        /** Base64-encoded URL of key image */
         this.imageURL = "";
+        /** Current mode/step */
         this.mode = DecoderMode.NONE;
+        /** Length of blade, in mm */
         this.bladeLength = -1;
+        /** Height of blade, in mm */
         this.bladeHeight = -1;
+        /** Vertical pixels per mm */
         this.vPixPermm = 0.0;
+        /** Horizontal pixels per mm */
         this.hPixPermm = 0.0;
+        /** Spacing between each cut, in mm */
         this.cutSpacing = 0;
+        /** Location of first cut, in mm */
         this.firstCut = 0;
+        /** Order in which cuts are numbered (0 = bow to tip, 1 = tip to bow) */
         this.cutOrder = 0;
+        /** Color to use to display bitting */
         this.bittingColor = "Yellow";
+        /** Color to use to display crop boundries */
+        this.cropBoxColor = "Red";
+        /** Color to use to display bottom alignment line */
+        this.bottomAlignColor = "Red";
+        /** Color to use to display top alignment line */
+        this.topAlignColor = "Orange";
+        /** Color to use to display shoulder alignment line */
+        this.shoulderAlignColor = "Blue";
+        /** Color to use to display tip alignment line */
+        this.tipAlignColor = "Green";
         this.dsd = new DSDDatabase();
         this.keyFile = $(".keyFile");
         this.keyCanvas = $(".keyCanvas")[0];
@@ -216,6 +242,8 @@ var KeyDecoder = /** @class */ (function () {
         this.cropControls.height = $(".cropHeight");
         this.alignControls = new Object();
         this.alignControls.rotate = $(".alignRotate");
+        this.alignControls.keystoneRatio = $(".alignKeystoneRatio");
+        this.alignControls.keystoneSlices = $(".alignKeystoneSlices");
         this.alignControls.hFlip = $(".alignHFlip");
         this.alignControls.vFlip = $(".alignVFlip");
         this.alignControls.bottom = $(".alignBottom");
@@ -228,6 +256,10 @@ var KeyDecoder = /** @class */ (function () {
         this.bittingControlsDiv = $(".bittingControls");
         this.keyDepths = null;
     }
+    /**
+     * Reads the keys from the database, creates canvas contexts, and attaches
+     * event callbacks.
+     */
     KeyDecoder.prototype.init = function () {
         var _this = this;
         this.dsd.readDatabase("dsd.json", function () { return _this.onDSDUpdate(); });
@@ -248,11 +280,18 @@ var KeyDecoder = /** @class */ (function () {
             containerStyle: {},
         });
     };
+    /**
+     * Resizes canvas to size of the element, to prevent distortion
+     */
     KeyDecoder.prototype.resizeCanvas = function () {
         var rect = this.keyCanvas.getBoundingClientRect();
         this.keyCanvas.height = this.ctrlCanvas.height = this.bittingCanvas.height = rect.height;
         this.keyCanvas.width = this.ctrlCanvas.width = this.bittingCanvas.width = rect.width;
     };
+    /**
+     * Called when a new image is chosen. Draws the image on the canvas in order
+     * to be cropped.
+     */
     KeyDecoder.prototype.onKeyFileChange = function () {
         var _this = this;
         console.info(this.keyFile.prop("files")[0]);
@@ -271,6 +310,10 @@ var KeyDecoder = /** @class */ (function () {
         };
         fr.readAsDataURL(this.keyFile.prop("files")[0]);
     };
+    /**
+     * Called when the DSD database is updated. Clears the selection boxes, and
+     * populates the brands.
+     */
     KeyDecoder.prototype.onDSDUpdate = function () {
         var _this = this;
         this.keyBrandSelect.empty();
@@ -283,6 +326,9 @@ var KeyDecoder = /** @class */ (function () {
         });
         this.onKeyBrandChange();
     };
+    /**
+     * Called when a key brand is selected. Updates the list of keys types.
+     */
     KeyDecoder.prototype.onKeyBrandChange = function () {
         var _this = this;
         this.keyTypeSelect.empty();
@@ -297,6 +343,9 @@ var KeyDecoder = /** @class */ (function () {
             this.onKeyTypeChange();
         }
     };
+    /**
+     * Called when a key type is selected. Updates list of possible number of cuts.
+     */
     KeyDecoder.prototype.onKeyTypeChange = function () {
         var _this = this;
         var type = this.keyTypeSelect.val();
@@ -314,8 +363,22 @@ var KeyDecoder = /** @class */ (function () {
                 }).text("" + val));
             });
             this.onNCutsChange();
+            var bottom = this.alignControls.bottom.val();
+            var top_1 = this.alignControls.top.val();
+            var shoulder = this.alignControls.shoulder.val();
+            var tip = this.alignControls.tip.val();
+            if (bottom !== undefined && top_1 !== undefined) {
+                this.vPixPermm = (((+bottom - +top_1) / 100) * this.ctrlCanvas.height) / this.bladeHeight;
+            }
+            if (shoulder !== undefined && tip !== undefined) {
+                this.hPixPermm = (((+tip - +shoulder) / 100) * this.ctrlCanvas.width) / this.bladeLength;
+            }
         }
     };
+    /**
+     * Called when the number of cuts is selected. Updates the number of select
+     * boxes for choosing bitting codes.
+     */
     KeyDecoder.prototype.onNCutsChange = function () {
         var _this = this;
         var nCuts = this.keyNCutsSelect.val();
@@ -331,6 +394,10 @@ var KeyDecoder = /** @class */ (function () {
             }
         }
     };
+    /**
+     * Called when a bitting is selected for one of the cuts. Redraws bitting
+     * lines on the bitting canvas.
+     */
     KeyDecoder.prototype.onBittingChange = function () {
         var nCuts = this.keyNCutsSelect.val();
         if (nCuts !== undefined) {
@@ -348,43 +415,56 @@ var KeyDecoder = /** @class */ (function () {
     /**************
      * Align Mode *
      **************/
+    /**
+     * Redraws image with crop, rotation, flipping, and keystone, then draws
+     * alignment lines.
+     */
     KeyDecoder.prototype.drawAlign = function () {
-        var rot = this.alignControls.rotate.val();
+        var rotZ = this.alignControls.rotate.val();
+        var keyS = this.alignControls.keystoneSlices.val();
+        var keyR = this.alignControls.keystoneRatio.val();
         var hFlip = this.alignControls.hFlip.prop("checked");
         var vFlip = this.alignControls.vFlip.prop("checked");
         var bottom = this.alignControls.bottom.val();
         var top = this.alignControls.top.val();
         var shoulder = this.alignControls.shoulder.val();
         var tip = this.alignControls.tip.val();
-        if (rot !== undefined && this.keyContext !== null) {
+        var x, y, w, h;
+        x = this.cropControls.left.val();
+        y = this.cropControls.top.val();
+        w = this.cropControls.width.val();
+        h = this.cropControls.height.val();
+        if (rotZ !== undefined && keyS !== undefined && keyR !== undefined && x !== undefined && y !== undefined && w !== undefined && h !== undefined && this.keyContext !== null) {
             this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
             this.keyContext.translate(this.keyCanvas.width / 2, this.keyCanvas.height / 2);
             this.keyContext.scale(hFlip ? -1 : 1, vFlip ? -1 : 1);
-            this.keyContext.rotate(+rot * Math.PI / 180.0);
+            this.keyContext.rotate(+rotZ * Math.PI / 180.0);
             this.keyContext.translate(-this.keyCanvas.width / 2, -this.keyCanvas.height / 2);
-            this.doCrop();
+            //this.doCrop();
+            this.cropKeyWithKeystone(+x / 100 * this.image.width, +y / 100 * this.image.height, +w / 100 * this.image.width, +h / 100 * this.image.height, +keyS, +keyR);
             this.keyContext.setTransform(1, 0, 0, 1, 0, 0);
         }
         if (this.ctrlContext !== null) {
             this.ctrlContext.clearRect(0, 0, this.ctrlCanvas.width, this.ctrlCanvas.height);
             if (bottom !== undefined) {
-                canvas.drawLine(this.ctrlContext, 0, +bottom / 100 * this.ctrlCanvas.height, this.ctrlCanvas.width, +bottom / 100 * this.ctrlCanvas.height, "red");
+                canvas.drawLine(this.ctrlContext, 0, +bottom / 100 * this.ctrlCanvas.height, this.ctrlCanvas.width, +bottom / 100 * this.ctrlCanvas.height, this.bottomAlignColor);
             }
             if (top !== undefined) {
-                canvas.drawLine(this.ctrlContext, 0, +top / 100 * this.ctrlCanvas.height, this.ctrlCanvas.width, +top / 100 * this.ctrlCanvas.height, "orange");
+                canvas.drawLine(this.ctrlContext, 0, +top / 100 * this.ctrlCanvas.height, this.ctrlCanvas.width, +top / 100 * this.ctrlCanvas.height, this.topAlignColor);
             }
             if (shoulder !== undefined) {
-                canvas.drawLine(this.ctrlContext, +shoulder / 100 * this.ctrlCanvas.width, 0, +shoulder / 100 * this.ctrlCanvas.width, this.ctrlCanvas.height, "blue");
+                canvas.drawLine(this.ctrlContext, +shoulder / 100 * this.ctrlCanvas.width, 0, +shoulder / 100 * this.ctrlCanvas.width, this.ctrlCanvas.height, this.shoulderAlignColor);
             }
             if (tip !== undefined) {
-                canvas.drawLine(this.ctrlContext, +tip / 100 * this.ctrlCanvas.width, 0, +tip / 100 * this.ctrlCanvas.width, this.ctrlCanvas.height, "green");
+                canvas.drawLine(this.ctrlContext, +tip / 100 * this.ctrlCanvas.width, 0, +tip / 100 * this.ctrlCanvas.width, this.ctrlCanvas.height, this.tipAlignColor);
             }
         }
     };
+    /**
+     * Called when alignment controls are changed. Calls drawAlign(), and sets
+     * the horizontal and vertical resolution in terms of pixels per mm.
+     */
     KeyDecoder.prototype.onAlignChange = function () {
-        var rot = this.alignControls.rotate.val();
-        var hFlip = this.alignControls.hFlip.prop("checked");
-        var vFlip = this.alignControls.vFlip.prop("checked");
         var bottom = this.alignControls.bottom.val();
         var top = this.alignControls.top.val();
         var shoulder = this.alignControls.shoulder.val();
@@ -397,6 +477,11 @@ var KeyDecoder = /** @class */ (function () {
             this.hPixPermm = (((+tip - +shoulder) / 100) * this.ctrlCanvas.width) / this.bladeLength;
         }
     };
+    /**
+     * Draws the bitting approximation on top of the key for visual inspection.
+     *
+     * @param depths List of cut depths to display
+     */
     KeyDecoder.prototype.drawBittingApproximation = function (depths) {
         var _this = this;
         var bottom = this.alignControls.bottom.val();
@@ -408,6 +493,12 @@ var KeyDecoder = /** @class */ (function () {
             var firstX = void 0;
             var bottomY = +bottom / 100 * this.ctrlCanvas.height;
             var x = 0, y = 0;
+            /**
+             * Draws a key bitting approximation marker
+             *
+             * @param x X position, in pixels
+             * @param y Y position, in pixels
+             */
             var placeBit = function (x, y) {
                 if (_this.bittingContext !== null) {
                     canvas.drawLine(_this.bittingContext, x - 8, y - 16, x, y, _this.bittingColor);
@@ -416,7 +507,6 @@ var KeyDecoder = /** @class */ (function () {
                 }
             };
             switch (this.cutOrder) {
-                // TODO: Support tip-relative
                 case 0:
                     firstX = this.firstCut * this.hPixPermm + (+shoulder / 100 * this.ctrlCanvas.width);
                     for (var i = 0; i < depths.length; i++) {
@@ -439,6 +529,9 @@ var KeyDecoder = /** @class */ (function () {
     /*************
      * Crop Mode *
      *************/
+    /**
+     * Displays crop lines.
+     */
     KeyDecoder.prototype.onCropChange = function () {
         var x, y, w, h;
         x = this.cropControls.left.val();
@@ -465,6 +558,9 @@ var KeyDecoder = /** @class */ (function () {
             });
         }
     };
+    /**
+     * Crops image.
+     */
     KeyDecoder.prototype.doCrop = function () {
         var x, y, w, h;
         x = this.cropControls.left.val();
@@ -494,23 +590,58 @@ var KeyDecoder = /** @class */ (function () {
      * @param h Height
      */
     KeyDecoder.prototype.cropKey = function (x, y, w, h) {
+        this.cropKeyWithKeystone(x, y, w, h, 1, 1);
+    };
+    /**
+     * Crops the image of the key, and keystone correct
+     *
+     * @param x X position
+     * @param y Y position
+     * @param w Width
+     * @param h Height
+     * @param nSlices Number of slices used to perform keystone correction
+     * @param s Keystone scale (1 = no keystone, <1 = right end is smaller, >1 = right end is larger)
+     */
+    KeyDecoder.prototype.cropKeyWithKeystone = function (x, y, w, h, nSlices, s) {
         if (this.image.src.length > 0) {
             if (this.keyContext !== null) {
+                var sliceWidth = w / nSlices;
+                var dSliceWidth = this.keyCanvas.width / nSlices;
+                var dsh = this.keyCanvas.height;
+                var ddh = ((dsh * s) - dsh) / nSlices;
                 this.keyContext.clearRect(0, 0, this.keyCanvas.width, this.keyCanvas.height);
-                this.keyContext.drawImage(this.image, x, y, w, h, 0, 0, this.keyCanvas.width, this.keyCanvas.height);
+                for (var i = 0; i < nSlices; i++) {
+                    this.keyContext.drawImage(this.image, x + sliceWidth * i, y, sliceWidth, h, //this.image.height,
+                    dSliceWidth * i, (this.keyCanvas.height - dsh) / 2, dSliceWidth, dsh);
+                    dsh += ddh;
+                }
             }
         }
     };
+    /**
+     * Displays crop box over image.
+     *
+     * @param x Left of crop box
+     * @param y Top of crop box
+     * @param w Width of crop box
+     * @param h Height of crop box
+     */
     KeyDecoder.prototype.updateCropBox = function (x, y, w, h) {
         if (this.ctrlContext !== null) {
             this.ctrlContext.clearRect(0, 0, this.ctrlCanvas.width, this.ctrlCanvas.height);
-            this.ctrlContext.strokeStyle = "red";
+            this.ctrlContext.strokeStyle = this.cropBoxColor;
             this.ctrlContext.strokeRect(x, y, w, h);
         }
     };
     return KeyDecoder;
 }());
+/**
+ * Current mode/step of decoder
+ */
 var DecoderMode;
+/**
+ * Current mode/step of decoder
+ */
 (function (DecoderMode) {
     DecoderMode[DecoderMode["NONE"] = 0] = "NONE";
     DecoderMode[DecoderMode["CROP"] = 1] = "CROP";
