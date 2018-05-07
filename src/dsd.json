@@ -5,7 +5,7 @@
                 "Schlage"
             ],
             "types": [
-                "C", "CE", "E", "EF", "F", "FG", "G", "H", "J", "K", "L", "1145", "145", "SC"
+                "C", "SC"
             ],
             "incremental_depths": true,
             "incremental_spacing": true,
@@ -22,6 +22,32 @@
 
             "blade_length": 26.5557,
             "blade_height": 8.51,
+
+            "order": 0
+        },
+
+        {
+            "names": [
+                "Kwikset"
+            ],
+            "types": [
+                "KW1", "KW1K"
+            ],
+            "incremental_depths": true,
+            "incremental_spacing": true,
+
+            "depth0": 8.33,
+            "depth_inc": 0.58,
+            "depth_count": 7,
+            "depth_start": 1,
+
+            "space0": 6.27,
+            "space_inc": 3.81,
+            "min_spaces": 5,
+            "max_spaces": 6,
+
+            "blade_length": 26.5557,
+            "blade_height": 8.33,
 
             "order": 0
         },
@@ -54,10 +80,10 @@
 
         {
             "names": [
-                "Best", "Arrow", "Falcon"
+                "Best/Arrow/Falcon"
             ],
             "types": [
-                "A2", "F", "D", "L"
+                "A2"
             ],
             "incremental_depths": false,
             "incremental_spacing": true,
@@ -89,10 +115,10 @@
 
         {
             "names": [
-                "Best", "Arrow", "Falcon"
+                "Best/Arrow/Falcon"
             ],
             "types": [
-                "A3", "A"
+                "A3"
             ],
             "incremental_depths": true,
             "incremental_spacing": true,
